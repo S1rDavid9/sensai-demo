@@ -1,0 +1,14 @@
+# Never ship pilot data or local environments into the image
+pilot/data/
+pilot/web/node_modules/
+pilot/web/dist/
+.venv/
+**/__pycache__/
+.git/
+analysis/
+docs/
+tests/
+logs/
+!logs/dqn/best_run.json
+!logs/v2/dqn/best_run.json
+*.ipynb
