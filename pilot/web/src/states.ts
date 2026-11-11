@@ -19,6 +19,14 @@ export const STATE_LABEL: Record<string, string> = {
   cant_see: "Can't see",
 };
 
+// In adaptive mode the state comes from the Stage 1 classifier, whose "fast and
+// mostly right" class is under-challenged (learners who would tick "Too easy"),
+// stored under the rushing state. Show what the classifier actually predicts.
+export function stateLabel(state: string, mode?: string): string {
+  if (mode === "adaptive" && state === "rushing") return "Under-challenged";
+  return STATE_LABEL[state] ?? state;
+}
+
 export const CHECKIN_CHOICES = [
   { choice: "easy", face: "😎", label: "Too easy" },
   { choice: "good", face: "🙂", label: "Going well" },

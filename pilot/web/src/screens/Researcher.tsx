@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, ApiError, load, researcherHeaders, save } from "../api";
-import { CHECKIN_CHOICES, STATE_LABEL } from "../states";
+import { CHECKIN_CHOICES, STATE_LABEL, stateLabel } from "../states";
 
 type Session = {
   id: number;
@@ -119,6 +119,7 @@ export default function Researcher() {
   }
 
   const decisionsByQ = new Map(detail?.decisions.map((d) => [d.question_index, d]) ?? []);
+  const openMode = sessions.find((s) => s.id === openId)?.mode;
   const checkinFace = (c: string) => CHECKIN_CHOICES.find((x) => x.choice === c);
 
   return (
@@ -173,7 +174,7 @@ export default function Researcher() {
           <h2>Sessions</h2>
           <table>
             <thead>
-              <tr><th>Code</th><th>Mode</th><th>Status</th><th>Progress</th><th>Correct</th><th>Obs.</th><th>Latest shadow decision</th><th></th></tr>
+              <tr><th>Code</th><th>Mode</th><th>Status</th><th>Progress</th><th>Correct</th><th>Obs.</th><th>Latest decision</th><th></th></tr>
             </thead>
             <tbody>
               {sessions.map((s) => (
@@ -186,7 +187,7 @@ export default function Researcher() {
                   <td>{s.observations}</td>
                   <td>
                     {s.latest_decision
-                      ? `Q${s.latest_decision.question_index + 1}: ${STATE_LABEL[s.latest_decision.state]} → ${s.latest_decision.action_name}${s.latest_decision.guardrail ? " 🛡" : ""}`
+                      ? `Q${s.latest_decision.question_index + 1}: ${stateLabel(s.latest_decision.state, s.mode)} → ${s.latest_decision.action_name}${s.latest_decision.guardrail ? " 🛡" : ""}`
                       : "—"}
                   </td>
                   <td>
@@ -205,8 +206,10 @@ export default function Researcher() {
           <section className="card wide">
             <h2>{sessions.find((s) => s.id === openId)?.participant_code}: question by question</h2>
             <p className="muted">
-              "State" comes from provisional rules, not a trained model. The DQN action is shadow mode: logged, never shown to the learner.
-              Where a guardrail ruled out the DQN's first choice, both are shown.
+              {openMode === "adaptive"
+                ? <>Adaptive mode: "State" comes from the Stage 1 classifier (last five answers: error rate and response time), and the DQN's action changes what the learner sees next.</>
+                : <>Pilot mode: "State" comes from provisional rules, not a trained model. The DQN action is shadow mode: logged, never shown to the learner.</>}
+              {" "}Where a guardrail ruled out the DQN's first choice, both are shown.
             </p>
             <table>
               <thead>
@@ -224,7 +227,7 @@ export default function Researcher() {
                       <td>{(a.response_time_ms / 1000).toFixed(1)}s</td>
                       <td>{a.first_input_ms === null ? "—" : `${(a.first_input_ms / 1000).toFixed(1)}s`}</td>
                       <td>{a.hints_used}</td>
-                      <td>{d ? STATE_LABEL[d.state] : "—"}</td>
+                      <td>{d ? stateLabel(d.state, openMode) : "—"}</td>
                       <td title={d?.guardrail ?? undefined}>
                         {!d ? "—" : d.guardrail ? <><s className="muted">{d.raw_action_name}</s> → {d.action_name} 🛡</> : d.action_name}
                       </td>
