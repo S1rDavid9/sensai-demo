@@ -66,4 +66,4 @@ class AdaptiveMode(SessionMode):
         if position + 1 >= SESSION_LENGTH:
             return Continuation(None, None)
         step = self.planner.next_step(decision.action, last, seen, seed=session_id * 100 + position)
-        return Continuation(step.question, {"message": step.message, "hint": step.hint})
+        return Continuation(step.question, {"message": step.message, "hint": step.hint, "badge": step.badge})

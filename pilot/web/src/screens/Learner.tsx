@@ -1,9 +1,64 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, ApiError, load, save, serverNow, syncClock } from "../api";
-import Mascot from "../components/Mascot";
+import Mascot, { type Mood } from "../components/Mascot";
 import { CHECKIN_CHOICES } from "../states";
 
-type Support = { message: string; hint: string | null };
+type Support = { message: string; hint: string | null; badge?: string };
+type Decision = {
+  mode: string; state: string; state_source: string; raw_action: string; action: string;
+  guardrail: string | null; model: string; level: number; next_level: number | null;
+  next_kind: string | null; badge: string | null;
+};
+
+// What SensAI is doing, in child-friendly words, shown with Sensei Ryu's message.
+const BADGES: Record<string, { icon: string; label: string; mood: Mood }> = {
+  harder: { icon: "⬆️", label: "A bit harder", mood: "cheering" },
+  easier: { icon: "⬇️", label: "A bit easier", mood: "gentle" },
+  new_type: { icon: "🔀", label: "New kind of puzzle", mood: "hello" },
+  hint: { icon: "💡", label: "Here's a hint", mood: "thinking" },
+  encourage: { icon: "💪", label: "Keep going", mood: "gentle" },
+  challenge: { icon: "⭐", label: "Challenge", mood: "cheering" },
+  simpler: { icon: "🪜", label: "Simpler one", mood: "gentle" },
+  new_topic: { icon: "🚀", label: "New topic", mood: "cheering" },
+  practise: { icon: "🔁", label: "Practice", mood: "gentle" },
+  top_level: { icon: "🏔️", label: "Top level", mood: "cheering" },
+};
+
+// Presenter view (?demo=1): shows the classifier's state and the DQN's action
+// after every answer, for demonstrations. Learners never see it.
+const ACTION_TEXT: Record<string, string> = {
+  increase_difficulty: "make it harder",
+  decrease_difficulty: "make it easier",
+  change_task_type: "switch puzzle type",
+  offer_hint: "show a hint",
+  add_encouragement: "encourage",
+  introduce_challenge: "give a challenge",
+  repeat_simplified: "simpler, same type",
+  advance_topic: "move to a new topic",
+};
+const STATE_TEXT: Record<string, string> = {
+  on_task: "On task", rushing: "Rushing", struggling: "Struggling", stuck: "Stuck",
+};
+function demoStateLabel(d: Decision) {
+  if (d.mode === "adaptive" && d.state === "rushing") return "Under-challenged";
+  return STATE_TEXT[d.state] ?? d.state;
+}
+const KIND_TEXT: Record<string, string> = {
+  arithmetic: "sum", missing_number: "missing number", word_problem: "word problem",
+  number_pattern: "number pattern", shape_pattern: "shape pattern", letter_pattern: "letter pattern",
+  odd_one_out: "odd one out",
+};
+function isDemo(): boolean {
+  try {
+    if (new URLSearchParams(window.location.search).has("demo")) {
+      sessionStorage.setItem("sensai.demo", "1");
+      return true;
+    }
+    return sessionStorage.getItem("sensai.demo") === "1";
+  } catch {
+    return new URLSearchParams(window.location.search).has("demo");
+  }
+}
 
 type Question = {
   id: string;
@@ -33,7 +88,8 @@ export default function Learner() {
   const [hint, setHint] = useState<string | null>(null);
   const [support, setSupport] = useState<Support | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
-  const [feedback, setFeedback] = useState<{ correct: boolean; correctAnswer: string; checkinDue: boolean; finished: boolean } | null>(null);
+  const [feedback, setFeedback] = useState<{ correct: boolean; correctAnswer: string; checkinDue: boolean; finished: boolean; decision?: Decision } | null>(null);
+  const [demo] = useState(isDemo);
   const [codeInput, setCodeInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -210,7 +266,7 @@ export default function Learner() {
     const responseTime = Math.round(performance.now() - shownAt.current);
     logEvent("input_changed", question.index, { keystrokes: keystrokes.current, deletions: deletions.current });
     try {
-      const res = await api<{ correct: boolean; correct_answer: string; checkin_due: boolean; finished: boolean }>(
+      const res = await api<{ correct: boolean; correct_answer: string; checkin_due: boolean; finished: boolean; decision?: Decision }>(
         "/api/learner/answer",
         {
           ...auth,
@@ -222,7 +278,7 @@ export default function Learner() {
           answered_client_ms: serverNow(),
         },
       );
-      setFeedback({ correct: res.correct, correctAnswer: res.correct_answer, checkinDue: res.checkin_due, finished: res.finished });
+      setFeedback({ correct: res.correct, correctAnswer: res.correct_answer, checkinDue: res.checkin_due, finished: res.finished, decision: res.decision });
       setPhase("feedback");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't save that answer. Try again.");
@@ -301,8 +357,15 @@ export default function Learner() {
         <form className="card question pop" key={question.id} onSubmit={submit}>
           {support && (
             <div className="speaker small">
-              <Mascot mood={support.hint ? "thinking" : "cheering"} size={64} />
-              <p className="bubble">{support.message}</p>
+              <Mascot mood={BADGES[support.badge ?? ""]?.mood ?? (support.hint ? "thinking" : "cheering")} size={64} />
+              <div>
+                {support.badge && BADGES[support.badge] && (
+                  <span className={`badge badge-${support.badge}`}>
+                    <span aria-hidden>{BADGES[support.badge].icon}</span> {BADGES[support.badge].label}
+                  </span>
+                )}
+                <p className="bubble">{support.message}</p>
+              </div>
             </div>
           )}
           <p className="instruction">{question.instruction}</p>
@@ -359,6 +422,7 @@ export default function Learner() {
           <button className="big" onClick={next} autoFocus>
             {feedback.finished && !feedback.checkinDue ? "Finish" : "Next"}
           </button>
+          {demo && feedback.decision && <DecisionStrip d={feedback.decision} />}
         </div>
       )}
 
@@ -407,5 +471,46 @@ export default function Learner() {
         </div>
       )}
     </main>
+  );
+}
+
+function DecisionStrip({ d }: { d: Decision }) {
+  const changed = d.raw_action !== d.action;
+  return (
+    <aside className="demo-strip" aria-label="What SensAI decided (presenter view)">
+      <div className="demo-title">SensAI decided <span className="muted">· presenter view</span></div>
+      <div className="demo-flow">
+        <span className="demo-step">
+          <small>Stage 1 · {d.mode === "adaptive" ? "classifier" : "provisional rules"}</small>
+          <b>{demoStateLabel(d)}</b>
+        </span>
+        <span className="demo-arrow">→</span>
+        <span className="demo-step">
+          <small>DQN chose</small>
+          <b className={changed ? "struck" : ""}>{ACTION_TEXT[d.raw_action] ?? d.raw_action}</b>
+        </span>
+        {changed && (
+          <>
+            <span className="demo-arrow">→</span>
+            <span className="demo-step guard">
+              <small>🛡 guardrail: {d.guardrail}</small>
+              <b>{ACTION_TEXT[d.action] ?? d.action}</b>
+            </span>
+          </>
+        )}
+        <span className="demo-arrow">→</span>
+        <span className="demo-step">
+          <small>{d.mode === "adaptive" ? "Next puzzle" : "Shadow mode"}</small>
+          <b>
+            {d.mode !== "adaptive"
+              ? "logged only, fixed form"
+              : d.next_level == null
+                ? "session ends"
+                : `level ${d.level} → ${d.next_level}, ${KIND_TEXT[d.next_kind ?? ""] ?? d.next_kind}`}
+          </b>
+        </span>
+      </div>
+      <div className="demo-model muted">model {d.model}</div>
+    </aside>
   );
 }

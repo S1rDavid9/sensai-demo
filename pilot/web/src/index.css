@@ -229,3 +229,23 @@ td.bad { color: var(--bad); font-weight: 700; }
   .research-grid > section:first-child { grid-row: auto; }
   table { display: block; overflow-x: auto; }
 }
+
+/* Action badge shown with Sensei Ryu's message (adaptive mode). */
+.badge { display: inline-flex; align-items: center; gap: .35em; font-size: .8rem; font-weight: 700;
+  padding: .2em .7em; border-radius: 999px; background: #eef0ff; color: #4b3fb8; margin-bottom: .35rem; }
+.badge-easier, .badge-simpler, .badge-practise, .badge-encourage { background: #e6f6f3; color: #1f7a6f; }
+.badge-hint { background: #fff4d6; color: #8a5a00; }
+.badge-challenge, .badge-harder, .badge-new_topic, .badge-top_level { background: #fde9df; color: #b2461a; }
+
+/* Presenter view (?demo=1). */
+.demo-strip { margin-top: 1.2rem; width: 100%; text-align: left; border: 1px dashed #9a8fe0;
+  border-radius: 12px; padding: .7rem .9rem; background: #f7f6ff; font-size: .85rem; }
+.demo-title { font-weight: 700; margin-bottom: .45rem; color: #4b3fb8; }
+.demo-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: .4rem; }
+.demo-step { display: flex; flex-direction: column; background: #fff; border: 1px solid #e3e0f7;
+  border-radius: 8px; padding: .35rem .55rem; min-width: 0; }
+.demo-step small { color: #6b6890; font-size: .72rem; }
+.demo-step.guard { border-color: #f0b9a3; background: #fff7f3; }
+.demo-arrow { align-self: center; color: #9a8fe0; font-weight: 700; }
+.struck { text-decoration: line-through; color: #8a87a8; }
+.demo-model { margin-top: .4rem; font-size: .72rem; }

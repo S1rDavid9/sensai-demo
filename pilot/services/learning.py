@@ -136,9 +136,18 @@ class LearningService:
             next_index = a.question_index + 1
             repos.sessions.advance(s["id"], next_index, nxt.next_question.id if nxt.next_question else None,
                                    nxt.support)
+            nq = nxt.next_question
             return {"correct": correct, "correct_answer": question.answer,
                     "checkin_due": a.question_index in CHECKIN_AFTER,
-                    "finished": next_index >= SESSION_LENGTH, "next_index": next_index}
+                    "finished": next_index >= SESSION_LENGTH, "next_index": next_index,
+                    # Shown only in the presenter view (?demo=1), never to learners.
+                    "decision": {"mode": s["mode"], "state": state.value, "state_source": mode.labeler.source,
+                                 "raw_action": decision.raw_action, "action": decision.action,
+                                 "guardrail": decision.guardrail, "model": decision.model,
+                                 "level": question.difficulty,
+                                 "next_level": nq.difficulty if nq else None,
+                                 "next_kind": nq.kind if nq else None,
+                                 "badge": (nxt.support or {}).get("badge")}}
 
     def checkin(self, code: str, token: str, after_question: int, choice: str, client_ms: int | None) -> None:
         if choice not in CHECKIN_CHOICES:
