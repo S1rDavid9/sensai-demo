@@ -230,13 +230,6 @@ td.bad { color: var(--bad); font-weight: 700; }
   table { display: block; overflow-x: auto; }
 }
 
-/* Action badge shown with Sensei Ryu's message (adaptive mode). */
-.badge { display: inline-flex; align-items: center; gap: .35em; font-size: .8rem; font-weight: 700;
-  padding: .2em .7em; border-radius: 999px; background: #eef0ff; color: #4b3fb8; margin-bottom: .35rem; }
-.badge-easier, .badge-simpler, .badge-practise, .badge-encourage { background: #e6f6f3; color: #1f7a6f; }
-.badge-hint { background: #fff4d6; color: #8a5a00; }
-.badge-challenge, .badge-harder, .badge-new_topic, .badge-top_level { background: #fde9df; color: #b2461a; }
-
 /* Presenter view (?demo=1). */
 .demo-strip { margin-top: 1.2rem; width: 100%; text-align: left; border: 1px dashed #9a8fe0;
   border-radius: 12px; padding: .7rem .9rem; background: #f7f6ff; font-size: .85rem; }

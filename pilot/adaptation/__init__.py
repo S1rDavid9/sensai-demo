@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 from pilot.core.tasks import MAX_LEVEL, MIN_LEVEL, Question, QuestionBank
 
-SAME, DIFFERENT, ANY = "same", "different", "any"
+SAME, DIFFERENT, ANY, NEW_TOPIC = "same", "different", "any", "new_topic"
 
 
 @dataclass(frozen=True)
@@ -62,7 +62,7 @@ EFFECTS: dict[str, ActionEffect] = {
         "Here's a similar one, a little simpler.",
         "Let's practise that kind again, a bit easier this time.",
     ), "simpler"),
-    "advance_topic": ActionEffect(+1, DIFFERENT, (
+    "advance_topic": ActionEffect(+1, NEW_TOPIC, (
         "Great, let's move on to something new.",
         "You've got that! Let's try a new topic.",
         "Well done! On to the next kind of puzzle.",
@@ -119,6 +119,8 @@ class CurriculumPlanner:
             return rng.choice(AT_EASIEST), "practise"
         if effect.level_change > 0 and moved <= 0:
             return rng.choice(AT_HARDEST), "top_level"
+        if effect.kind_rule == NEW_TOPIC and question.domain == last.domain:
+            return rng.choice(EFFECTS["increase_difficulty"].messages), "harder"
         return rng.choice(effect.messages), effect.badge
 
     def _pick(self, target: int, kind_rule: str, last: Question, seen: set[str], rng: random.Random) -> Question:
@@ -142,4 +144,6 @@ class CurriculumPlanner:
             return q.kind == last.kind
         if kind_rule == DIFFERENT:
             return q.kind != last.kind
+        if kind_rule == NEW_TOPIC:   # arithmetic <-> patterns, not just another kind of sum
+            return q.domain != last.domain
         return True

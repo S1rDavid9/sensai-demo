@@ -10,18 +10,10 @@ type Decision = {
   next_kind: string | null; badge: string | null;
 };
 
-// What SensAI is doing, in child-friendly words, shown with Sensei Ryu's message.
-const BADGES: Record<string, { icon: string; label: string; mood: Mood }> = {
-  harder: { icon: "⬆️", label: "A bit harder", mood: "cheering" },
-  easier: { icon: "⬇️", label: "A bit easier", mood: "gentle" },
-  new_type: { icon: "🔀", label: "New kind of puzzle", mood: "hello" },
-  hint: { icon: "💡", label: "Here's a hint", mood: "thinking" },
-  encourage: { icon: "💪", label: "Keep going", mood: "gentle" },
-  challenge: { icon: "⭐", label: "Challenge", mood: "cheering" },
-  simpler: { icon: "🪜", label: "Simpler one", mood: "gentle" },
-  new_topic: { icon: "🚀", label: "New topic", mood: "cheering" },
-  practise: { icon: "🔁", label: "Practice", mood: "gentle" },
-  top_level: { icon: "🏔️", label: "Top level", mood: "cheering" },
+// Sensei Ryu's face follows what SensAI is doing.
+const MOOD_FOR: Record<string, Mood> = {
+  harder: "cheering", easier: "gentle", new_type: "hello", hint: "thinking", encourage: "gentle",
+  challenge: "cheering", simpler: "gentle", new_topic: "cheering", practise: "gentle", top_level: "cheering",
 };
 
 // Presenter view (?demo=1): shows the classifier's state and the DQN's action
@@ -357,13 +349,8 @@ export default function Learner() {
         <form className="card question pop" key={question.id} onSubmit={submit}>
           {support && (
             <div className="speaker small">
-              <Mascot mood={BADGES[support.badge ?? ""]?.mood ?? (support.hint ? "thinking" : "cheering")} size={64} />
+              <Mascot mood={MOOD_FOR[support.badge ?? ""] ?? (support.hint ? "thinking" : "cheering")} size={64} />
               <div>
-                {support.badge && BADGES[support.badge] && (
-                  <span className={`badge badge-${support.badge}`}>
-                    <span aria-hidden>{BADGES[support.badge].icon}</span> {BADGES[support.badge].label}
-                  </span>
-                )}
                 <p className="bubble">{support.message}</p>
               </div>
             </div>
@@ -493,7 +480,7 @@ function DecisionStrip({ d }: { d: Decision }) {
           <>
             <span className="demo-arrow">→</span>
             <span className="demo-step guard">
-              <small>🛡 guardrail: {d.guardrail}</small>
+              <small>Guardrail: {d.guardrail}</small>
               <b>{ACTION_TEXT[d.action] ?? d.action}</b>
             </span>
           </>
