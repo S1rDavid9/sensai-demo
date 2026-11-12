@@ -54,8 +54,10 @@ def _not_when(state: BehaviouralState) -> StateRule:
 
 
 DEFAULT_RULES: tuple[GuardrailRule, ...] = (
-    StateRule(BehaviouralState.ON_TASK,
-              (("decrease_difficulty", "don't make it easier for a learner who is coping"),)),
+    StateRule(BehaviouralState.ON_TASK, (
+        ("decrease_difficulty", "don't make it easier for a learner who is coping"),
+        ("repeat_simplified", "don't make it easier for a learner who is coping"),
+    )),
     _not_when(BehaviouralState.STUCK),
     _not_when(BehaviouralState.STRUGGLING),
     DifficultyBoundsRule(),
@@ -79,6 +81,19 @@ class Decision:
         return ACTION_NAMES.index(self.action)
 
 
+# Right after a wrong answer, never push the learner on, whatever the label.
+AFTER_WRONG = {
+    "increase_difficulty": "don't make it harder right after a wrong answer",
+    "introduce_challenge": "don't add a challenge right after a wrong answer",
+    "advance_topic": "don't move on right after a wrong answer",
+}
+
+# When a learner who is coping has the policy's choice ruled out, use a fixed
+# rule (keep the level, change the kind of puzzle) rather than the policy's
+# next-best choice, which tended to be a hint or a simpler question.
+ON_TASK_FALLBACK = "change_task_type"
+
+
 class Shield:
     def __init__(self, scorer: ActionScorer, rules: tuple[GuardrailRule, ...] = DEFAULT_RULES) -> None:
         self.scorer = scorer
@@ -91,12 +106,19 @@ class Shield:
                 blocked.setdefault(action, reason)
         return blocked
 
-    def decide(self, observation: np.ndarray, state: BehaviouralState, difficulty: int) -> Decision:
+    def decide(self, observation: np.ndarray, state: BehaviouralState, difficulty: int,
+               last_correct: bool | None = None) -> Decision:
         scores = self.scorer.scores(observation)
         raw = ACTION_NAMES[int(np.argmax(scores))]
         blocked = self.ruled_out(state, difficulty)
+        if last_correct is False:
+            for action, reason in AFTER_WRONG.items():
+                blocked.setdefault(action, reason)
         allowed = [i for i, name in enumerate(ACTION_NAMES) if name not in blocked]
-        final = ACTION_NAMES[max(allowed, key=lambda i: scores[i])]
+        if raw in blocked and state == BehaviouralState.ON_TASK and ON_TASK_FALLBACK not in blocked:
+            final = ON_TASK_FALLBACK
+        else:
+            final = ACTION_NAMES[max(allowed, key=lambda i: scores[i])]
         return Decision(
             model=self.scorer.model_id,
             raw_action=raw,

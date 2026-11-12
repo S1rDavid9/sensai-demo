@@ -28,7 +28,7 @@ CLASS_TO_STATE = {
 
 
 class Stage1Labeler(StateLabeler):
-    source = "stage1_logreg_v1_smoothed2"
+    source = "stage1_logreg_v1_smoothed2_rules"
 
     def __init__(self, model_path: Path = DEFAULT_MODEL) -> None:
         self.model_path = model_path
@@ -65,4 +65,9 @@ class Stage1Labeler(StateLabeler):
         if len(history.answers) > 1:
             before = self.probabilities(LearnerHistory(history.answers[:-1]))
             probs = {k: (probs[k] + before.get(k, 0.0)) / 2 for k in probs}
+        # Two wrong answers in a row: the learner needs support, whatever the
+        # five-answer window says (it reacts slowly after a run of right answers).
+        last_two = history.answers[-2:]
+        if len(last_two) == 2 and not any(a.correct for a in last_two):
+            return CLASS_TO_STATE["needs_support"]
         return CLASS_TO_STATE[max(probs, key=probs.get)]

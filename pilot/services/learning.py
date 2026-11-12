@@ -126,7 +126,7 @@ class LearningService:
             history = repos.answers.history(s["id"])
             state = mode.labeler.label(history)
             observation = self.observations.build(state, history)
-            decision = self.shield.decide(observation, state, question.difficulty)
+            decision = self.shield.decide(observation, state, question.difficulty, last_correct=correct)
             repos.decisions.add(session_id=s["id"], question_index=a.question_index, state=state.value,
                                 state_source=mode.labeler.source,
                                 observation=[round(float(v), 4) for v in observation], decision=decision)
