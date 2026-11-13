@@ -47,16 +47,16 @@ class DifficultyBoundsRule(GuardrailRule):
 def _not_when(state: BehaviouralState) -> StateRule:
     word = state.label.lower()
     return StateRule(state, (
-        ("advance_topic", f"don't move on while the learner is {word}"),
-        ("increase_difficulty", f"don't make it harder while the learner is {word}"),
-        ("introduce_challenge", f"don't add a challenge while the learner is {word}"),
+        ("advance_topic", f"do not move on while the learner is {word}"),
+        ("increase_difficulty", f"do not make it harder while the learner is {word}"),
+        ("introduce_challenge", f"do not add a challenge while the learner is {word}"),
     ))
 
 
 DEFAULT_RULES: tuple[GuardrailRule, ...] = (
     StateRule(BehaviouralState.ON_TASK, (
-        ("decrease_difficulty", "don't make it easier for a learner who is coping"),
-        ("repeat_simplified", "don't make it easier for a learner who is coping"),
+        ("decrease_difficulty", "do not make it easier for a learner who is coping"),
+        ("repeat_simplified", "do not make it easier for a learner who is coping"),
     )),
     _not_when(BehaviouralState.STUCK),
     _not_when(BehaviouralState.STRUGGLING),
@@ -83,9 +83,9 @@ class Decision:
 
 # Right after a wrong answer, never push the learner on, whatever the label.
 AFTER_WRONG = {
-    "increase_difficulty": "don't make it harder right after a wrong answer",
-    "introduce_challenge": "don't add a challenge right after a wrong answer",
-    "advance_topic": "don't move on right after a wrong answer",
+    "increase_difficulty": "do not make it harder right after a wrong answer",
+    "introduce_challenge": "do not add a challenge right after a wrong answer",
+    "advance_topic": "do not move on right after a wrong answer",
 }
 
 # When a learner who is coping has the policy's choice ruled out, use a fixed

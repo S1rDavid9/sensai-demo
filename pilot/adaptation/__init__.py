@@ -28,43 +28,43 @@ class ActionEffect:
 EFFECTS: dict[str, ActionEffect] = {
     "increase_difficulty": ActionEffect(+1, ANY, (
         "Nice work! This one is a little harder.",
-        "You're doing great, let's step it up a bit!",
+        "You are doing great, so here is a slightly harder one!",
         "Ready for something trickier? Here you go!",
     ), "harder"),
     "decrease_difficulty": ActionEffect(-1, ANY, (
-        "Let's try one that's a bit easier.",
-        "Let's take a smaller step with this one.",
-        "This one should feel a bit easier. You've got this!",
+        "Now try one that is a bit easier.",
+        "Here is a smaller step for this one.",
+        "This one should feel a bit easier. You can do it!",
     ), "easier"),
     "change_task_type": ActionEffect(0, DIFFERENT, (
-        "Let's try a different kind of puzzle.",
+        "Now try a different kind of puzzle.",
         "Time for something new! A different kind of puzzle.",
-        "Let's switch things up with a new type of puzzle.",
+        "Here is a new type of puzzle to try.",
     ), "new_type"),
     "offer_hint": ActionEffect(0, ANY, (
-        "Here's a tip to help with this one.",
-        "I'll give you a clue for this one.",
-        "Let's look at this one together. Here's a hint!",
+        "Here is a tip to help with this one.",
+        "I will give you a clue for this one.",
+        "We can look at this one together. Here is a hint!",
     ), "hint", show_hint=True),
     "add_encouragement": ActionEffect(0, ANY, (
-        "You're working hard. Keep going, you can do this!",
-        "Mistakes help us learn. Let's try this one!",
+        "You are working hard. Keep going, you can do this!",
+        "Mistakes help us learn. Try this one!",
         "I believe in you! Take your time with this one.",
         "Every puzzle makes your brain stronger. Keep going!",
     ), "encourage"),
     "introduce_challenge": ActionEffect(+1, DIFFERENT, (
         "Challenge time! Can you crack this one?",
-        "Here's a challenge puzzle, just for you!",
-        "You're on a roll. Try this challenge!",
+        "Here is a challenge puzzle, just for you!",
+        "You are on a roll. Try this challenge!",
     ), "challenge"),
     "repeat_simplified": ActionEffect(-1, SAME, (
-        "Let's try a simpler one like the last.",
-        "Here's a similar one, a little simpler.",
-        "Let's practise that kind again, a bit easier this time.",
+        "Now try a simpler one like the last.",
+        "Here is a similar one, a little simpler.",
+        "Practise that kind again, a bit easier this time.",
     ), "simpler"),
     "advance_topic": ActionEffect(+1, NEW_TOPIC, (
-        "Great, let's move on to something new.",
-        "You've got that! Let's try a new topic.",
+        "Great, now we move on to something new.",
+        "You have got that! Now try a new topic.",
         "Well done! On to the next kind of puzzle.",
     ), "new_topic"),
 }
@@ -72,18 +72,18 @@ EFFECTS: dict[str, ActionEffect] = {
 # When the bank can't move the difficulty the way the action intended (easier
 # at level 1, harder at level 5), say what actually happens instead.
 AT_EASIEST = (
-    "Let's practise another one like that. Take your time.",
-    "Let's do another one at this level together.",
-    "Here's another one to practise. You can do it!",
+    "Practise another one like that. Take your time.",
+    "We can do another one at this level together.",
+    "Here is another one to practise. You can do it!",
     "Practice makes us stronger. Try this one!",
-    "Let's keep practising at this level. Nice and steady.",
+    "Keep practising at this level. Nice and steady.",
 )
 AT_HARDEST = (
-    "You're at the top level! Here's another tough one.",
-    "These are the hardest puzzles, and you're doing them! Try this one.",
+    "You are at the top level! Here is another tough one.",
+    "These are the hardest puzzles, and you are doing them! Try this one.",
     "Top level again. Can you crack this one too?",
-    "Wow, still at the top! Here's another hard one.",
-    "You're a puzzle master! One more tough one.",
+    "Wow, still at the top! Here is another hard one.",
+    "You are a puzzle master! One more tough one.",
 )
 
 

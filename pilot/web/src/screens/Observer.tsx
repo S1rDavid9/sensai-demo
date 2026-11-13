@@ -27,7 +27,7 @@ export default function Observer() {
       setSessions(list);
       setError(null);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Can't reach the server.");
+      setError(err instanceof ApiError ? err.message : "Cannot reach the server.");
       if (err instanceof ApiError && err.status === 401) setReady(false);
     }
   }, [key]);

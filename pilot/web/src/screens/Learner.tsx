@@ -207,7 +207,7 @@ export default function Learner() {
       if (res.resumed) await loadQuestion(a);
       else setPhase("welcome");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't connect. Tell the researcher.");
+      setError(err instanceof ApiError ? err.message : "Could not connect. Tell the researcher.");
     } finally {
       setBusy(false);
     }
@@ -273,7 +273,7 @@ export default function Learner() {
       setFeedback({ correct: res.correct, correctAnswer: res.correct_answer, checkinDue: res.checkin_due, finished: res.finished, decision: res.decision });
       setPhase("feedback");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't save that answer. Try again.");
+      setError(err instanceof ApiError ? err.message : "Could not save that answer. Try again.");
     } finally {
       setBusy(false);
     }
@@ -329,19 +329,19 @@ export default function Learner() {
         <div className="card center pop">
           <div className="speaker">
             <Mascot mood="hello" size={110} />
-            <p className="bubble">I'm Sensei Ryu! Let's do some puzzles together.</p>
+            <p className="bubble">I am Sensei Ryu! We will do some puzzles together.</p>
           </div>
           <p className="lead">
             {adaptive
-              ? <>You'll do {nQuestions} puzzles: sums, number patterns, shapes and letters. I'll pick each one to suit how you're doing.</>
-              : <>You'll see {nQuestions} puzzles: sums, number patterns, shapes and letters. They start easy and get harder.</>}
+              ? <>You will do {nQuestions} puzzles: sums, number patterns, shapes and letters. I will pick each one to suit how you are doing.</>
+              : <>You will see {nQuestions} puzzles: sums, number patterns, shapes and letters. They start easy and get harder.</>}
           </p>
           <ul className="rules">
-            <li><span aria-hidden>🌱</span> Take your time. This is not a test and there's no score.</li>
-            <li><span aria-hidden>💡</span> If you're not sure, press <b>Need a hint?</b></li>
-            <li><span aria-hidden>🙂</span> Now and then I'll ask how it's going.</li>
+            <li><span aria-hidden>🌱</span> Take your time. This is not a test and there is no score.</li>
+            <li><span aria-hidden>💡</span> If you are not sure, press <b>Need a hint?</b></li>
+            <li><span aria-hidden>🙂</span> Now and then I will ask how it is going.</li>
           </ul>
-          <button className="big" onClick={() => auth && loadQuestion(auth)}>Let's go!</button>
+          <button className="big" onClick={() => auth && loadQuestion(auth)}>Start!</button>
         </div>
       )}
 
@@ -403,7 +403,7 @@ export default function Learner() {
           ) : (
             <>
               <h2>Not quite</h2>
-              <p className="lead">The answer was <b className="answer-reveal">{feedback.correctAnswer}</b>. You'll get the next one!</p>
+              <p className="lead">The answer was <b className="answer-reveal">{feedback.correctAnswer}</b>. You will get the next one!</p>
             </>
           )}
           <button className="big" onClick={next} autoFocus>
@@ -419,7 +419,7 @@ export default function Learner() {
             <Mascot mood="thinking" size={90} />
             <p className="bubble">How is it going?</p>
           </div>
-          <p className="muted">Pick the one that fits best. There's no wrong answer.</p>
+          <p className="muted">Pick the one that fits best. There is no wrong answer.</p>
           <div className="faces">
             {CHECKIN_CHOICES.map((c) => (
               <button key={c.choice} className="face" onClick={() => checkin(c.choice)}>
@@ -452,7 +452,7 @@ export default function Learner() {
           ) : (
             <>
               <h1>All done!</h1>
-              <p className="lead">Thank you for helping. You can tell the researcher you've finished.</p>
+              <p className="lead">Thank you for helping. You can tell the researcher you have finished.</p>
             </>
           )}
         </div>

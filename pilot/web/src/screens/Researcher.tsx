@@ -44,7 +44,7 @@ export default function Researcher() {
       setError(null);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) setAuthed(false);
-      setError(err instanceof ApiError ? err.message : "Can't reach the server.");
+      setError(err instanceof ApiError ? err.message : "Cannot reach the server.");
     }
   }, [key]);
 
@@ -82,12 +82,12 @@ export default function Researcher() {
       setForm({ guardian_consent: false, learner_assent: false, recorded_by: form.recorded_by, notes: "", mode: form.mode });
       refresh();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Couldn't create the session.");
+      setError(err instanceof ApiError ? err.message : "Could not create the session.");
     }
   }
 
   async function closeSession(id: number) {
-    if (!confirm("Close this session? The learner won't be able to continue it.")) return;
+    if (!confirm("Close this session? The learner will not be able to continue it.")) return;
     await api(`/api/researcher/sessions/${id}/close`, {}, researcherHeaders(key));
     refresh();
   }

@@ -64,7 +64,7 @@ class LearningService:
             repos = Repositories(con)
             s = repos.sessions.by_code(code.strip())
             if not s:
-                raise NotFound("That code doesn't match a session. Check it with the researcher.")
+                raise NotFound("That code does not match a session. Check it with the researcher.")
             if s["status"] not in ("ready", "active"):
                 raise Conflict("This session has already finished.")
             token = secrets.token_urlsafe(24)

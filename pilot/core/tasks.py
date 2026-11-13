@@ -75,7 +75,7 @@ BANK: tuple[Question, ...] = (
     _q("1-sum-b", "arithmetic", 1, "9 − 4", "5", "Count back 4 from 9."),
     _q("1-missing-a", "missing_number", 1, "☐ + 3 = 10", "7", "What do you add to 3 to make 10?"),
     _q("1-numpat-a", "number_pattern", 1, "1, 2, 3, 4, ?", "5", "Count up by one."),
-    _q("1-letter-a", "letter_pattern", 1, "A, B, C, D, ?", "E", "It's the next letter of the alphabet.", ("D", "E", "F", "G")),
+    _q("1-letter-a", "letter_pattern", 1, "A, B, C, D, ?", "E", "It is the next letter of the alphabet.", ("D", "E", "F", "G")),
     _q("1-odd-a", "odd_one_out", 1, "2   4   6   7", "7", "Which one is not even?", ("2", "4", "6", "7")),
     # ---- Level 2 ----
     _q("2-numpat-a", "number_pattern", 2, "3, 7, 11, 15, ?", "19", "Look at how much it goes up each time."),
@@ -89,7 +89,7 @@ BANK: tuple[Question, ...] = (
     _q("2-odd-a", "odd_one_out", 2, "10   20   25   30", "25", "Count in tens.", ("10", "20", "25", "30")),
     # ---- Level 3 ----
     _q("3-word-a", "word_problem", 3, "A bus has 4 rows with 6 seats in each row. How many seats are there?", "24",
-       "That's 4 groups of 6."),
+       "That is 4 groups of 6."),
     _q("3-shape-a", "shape_pattern", 3, "▲ ■ ■ ▲ ■ ■ ▲ ?", "■", "Find the group of shapes that repeats.", ("▲", "■", "●", "◆")),
     _q("3-sum-a", "arithmetic", 3, "47 + 38", "85", "7 + 8 is 15, so carry 1 ten over to the tens."),
     _q("3-numpat-a", "number_pattern", 3, "3, 6, 12, 24, ?", "48", "Each number is double the one before."),
@@ -111,7 +111,7 @@ BANK: tuple[Question, ...] = (
        ("▲", "●", "■", "◆")),
     # ---- Level 5 ----
     _q("5-missing-a", "missing_number", 5, "☐ × 7 + 4 = 60", "8",
-       "Take away the 4 first. Then which number times 7 makes what's left?"),
+       "Take away the 4 first. Then which number times 7 makes what is left?"),
     _q("5-numpat-a", "number_pattern", 5, "1, 1, 2, 3, 5, 8, ?", "13", "Add the two numbers before to get the next one."),
     _q("5-word-a", "word_problem", 5,
        "A class of 28 learners sits in groups of 4. Each group gets 3 pencils. How many pencils are needed?", "21",

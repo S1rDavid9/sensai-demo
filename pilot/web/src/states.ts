@@ -7,7 +7,7 @@ export const OBSERVER_CODES = [
   { code: "struggling", label: "Struggling", hint: "Slow, getting answers wrong, working hard at it", color: "var(--struggling)" },
   { code: "stuck", label: "Stuck", hint: "Long pause, not trying, staring at the question", color: "var(--stuck)" },
   { code: "off_task", label: "Off task", hint: "Talking, looking away, doing something else", color: "var(--off-task)" },
-  { code: "cant_see", label: "Can't see", hint: "Learner not visible or screen blocked", color: "var(--muted)" },
+  { code: "cant_see", label: "Cannot see", hint: "Learner not visible or screen blocked", color: "var(--muted)" },
 ] as const;
 
 export const STATE_LABEL: Record<string, string> = {
@@ -16,7 +16,7 @@ export const STATE_LABEL: Record<string, string> = {
   struggling: "Struggling",
   stuck: "Stuck",
   off_task: "Off task",
-  cant_see: "Can't see",
+  cant_see: "Cannot see",
 };
 
 // In adaptive mode the state comes from the Stage 1 classifier, whose "fast and
@@ -30,6 +30,6 @@ export function stateLabel(state: string, mode?: string): string {
 export const CHECKIN_CHOICES = [
   { choice: "easy", face: "😎", label: "Too easy" },
   { choice: "good", face: "🙂", label: "Going well" },
-  { choice: "hard", face: "😓", label: "It's hard" },
-  { choice: "lost", face: "😕", label: "I'm lost" },
+  { choice: "hard", face: "😓", label: "It is hard" },
+  { choice: "lost", face: "😕", label: "I am lost" },
 ] as const;
