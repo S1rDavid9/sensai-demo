@@ -5,6 +5,7 @@ import "./index.css";
 import Learner from "./screens/Learner";
 import Observer from "./screens/Observer";
 import Researcher from "./screens/Researcher";
+import Privacy from "./screens/Privacy";
 
 function Home() {
   return (
@@ -25,6 +26,7 @@ function Home() {
           <span>Sessions, consent, live progress and export</span>
         </Link>
       </div>
+      <p className="home-footer"><Link to="/privacy">Privacy policy</Link></p>
     </main>
   );
 }
@@ -37,6 +39,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/learn" element={<Learner />} />
         <Route path="/observe" element={<Observer />} />
         <Route path="/researcher" element={<Researcher />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
